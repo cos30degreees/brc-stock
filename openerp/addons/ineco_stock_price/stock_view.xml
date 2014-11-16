@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+	<record id="view_ineco_picking_price_tree" model="ir.ui.view">
+            <field name="name">ineco.price.stockpicking.tree</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="stock.view_move_picking_tree"/>
+            <field name="arch" type="xml">
+		<data>
+		<field name='product_qty' position="after">
+                    <field name="x_amount"/>
+		</field>
+            	<field name='product_qty' position="after">
+		    <field name="price_unit" />
+		</field>
+		</data>
+            </field>
+       	</record>            
+
+	<record id="view_ineco_move_price_form" model="ir.ui.view">
+            <field name="name">ineco.price.move.form</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="stock.view_move_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    <group name="destination_grp" position="replace">
+                        <group name="destination_grp" invisible="1"/>
+                    </group>
+
+                    <field name="location_id" position="replace" />
+
+                    <field name="type" position="before">
+                      <field name="location_id" on_change="set_default_source_destination(type, context)"/>
+                    </field>
+
+                    <field name="location_id" position="before">
+                        <field name="on_hand" readonly="1"/>
+                    </field>
+
+                    <field name="type" position="after">
+                        <field name="location_dest_id"/>
+                    </field>
+
+                    <field name="name" position="replace">
+                        <field name="name" on_change="set_price_unit(product_id)"/>
+                    </field>
+
+                    <field name="company_id" position="before">
+                        <field name="price_unit"/>
+                    </field>
+
+                    <field name="company_id" position="after">
+                         <field name="x_amount" on_change="compute_price_unit(product_qty, x_amount, context)"/>
+                    </field>
+
+                    <field name="create_date" position="replace">
+                        <field name="create_date" invisible="1"/>
+                    </field>
+
+                    <field name="origin" position="replace">
+                        <field name="reason_id" on_change="onchange_reason(reason_id)"
+                        invisible="context.get('picking_type') == 'in'"/>
+                    </field>
+
+                </data>
+
+            </field>
+       	</record>       	                
+        
+    </data>
+</openerp>

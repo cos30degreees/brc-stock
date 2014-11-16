@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    	<record id="view_ineco_adempier_form" model="ir.ui.view">
+            <field name="name">ineco.adempiere.form</field>
+            <field name="model">ineco.adempiere.server</field>
+            <field name="priority" eval="6"/>
+            <field name="arch" type="xml">
+            	<form string="Adempiere Configuration" version="7.0">
+            		<group>
+            			<group>
+		            		<field name="name" />
+		            		
+		            		<field name="dbname" />
+            			</group>
+            			<group>
+		            		<field name="user" />
+		            		<field name="password" />
+		            		<field name="active" />
+            			</group>
+            			<footer>
+            				<button name="action_sync_account" string="1. Sync Account" type="object"/>
+		                    <button name="action_sync_category" string="2. Sync Product Category" type="object"/>
+		                    <button name="action_sync_uom" string="3. Sync UOM" type="object"/>
+		                    <button name="action_sync_product" string="4. Sync Product" type="object"/>          			
+            			</footer>
+            		</group>
+            	</form>
+           	</field>
+        </record>
+
+    	<record id="view_ineco_adempier_tree" model="ir.ui.view">
+            <field name="name">ineco.adempiere.tree</field>
+            <field name="model">ineco.adempiere.server</field>
+            <field name="priority" eval="6"/>
+            <field name="arch" type="xml">
+            	<tree string="Adempiere Configuration">
+            		<field name="name" />
+            		<field name="dbname" />
+            		<field name="user" />
+            	</tree>
+           	</field>
+        </record>        
+
+    	<record id="view_ineco_adempier_search" model="ir.ui.view">
+            <field name="name">ineco.adempiere.search</field>
+            <field name="model">ineco.adempiere.server</field>
+            <field name="priority" eval="6"/>
+            <field name="arch" type="xml">
+            	<search string="Adempiere Configuration">
+            		<field name="name" />
+            		<field name="dbname" />
+            		<field name="user" />
+            	</search>
+           	</field>
+        </record>          
+        
+        <record id="action_ineco_adempier" model="ir.actions.act_window">
+            <field name="name">Adempier Server</field>
+            <field name="res_model">ineco.adempiere.server</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain"></field>
+            <field name="view_id" ref="view_ineco_adempier_tree"/>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to register a adempiere server. 
+              </p><p>
+                Here you can receive individual products, no matter what
+                purchase order or picking order they come from. You will find
+                the list of all products you are waiting for. Once you receive
+                an order, you can filter based on the name of the supplier or
+                the purchase order reference. Then you can confirm all products
+                received using the buttons on the right of each line.
+              </p>
+            </field>
+        </record>
+
+      <menuitem 
+      	action="action_ineco_adempier" 
+      	id="menu_ineco_adempier" 
+      	parent="menu_bkkrubber_stock_config" sequence="40"/>
+        
+	</data>
+</openerp>

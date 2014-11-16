@@ -1,0 +1,83 @@
+                                            Table "public.stock_location"
+          Column          |            Type             |                          Modifiers                          
+--------------------------+-----------------------------+-------------------------------------------------------------
+ id                       | integer                     | not null default nextval('stock_location_id_seq'::regclass)
+ parent_left              | integer                     | 
+ parent_right             | integer                     | 
+ create_uid               | integer                     | 
+ create_date              | timestamp without time zone | 
+ write_date               | timestamp without time zone | 
+ write_uid                | integer                     | 
+ comment                  | text                        | 
+ chained_delay            | integer                     | 
+ chained_company_id       | integer                     | 
+ active                   | boolean                     | 
+ posz                     | integer                     | 
+ posx                     | integer                     | 
+ posy                     | integer                     | 
+ valuation_in_account_id  | integer                     | 
+ partner_id               | integer                     | 
+ icon                     | character varying(64)       | 
+ valuation_out_account_id | integer                     | 
+ scrap_location           | boolean                     | 
+ name                     | character varying(64)       | not null
+ chained_location_id      | integer                     | 
+ chained_journal_id       | integer                     | 
+ chained_picking_type     | character varying           | 
+ company_id               | integer                     | 
+ chained_auto_packing     | character varying           | not null
+ complete_name            | character varying(256)      | 
+ usage                    | character varying           | not null
+ location_id              | integer                     | 
+ chained_location_type    | character varying           | not null
+ is_stock                 | boolean                     | 
+Indexes:
+    "stock_location_pkey" PRIMARY KEY, btree (id)
+    "stock_location_company_id_index" btree (company_id)
+    "stock_location_location_id_index" btree (location_id)
+    "stock_location_parent_left_index" btree (parent_left)
+    "stock_location_parent_right_index" btree (parent_right)
+    "stock_location_usage_index" btree (usage)
+Foreign-key constraints:
+    "stock_location_chained_company_id_fkey" FOREIGN KEY (chained_company_id) REFERENCES res_company(id) ON DELETE SET NULL
+    "stock_location_chained_journal_id_fkey" FOREIGN KEY (chained_journal_id) REFERENCES stock_journal(id) ON DELETE SET NULL
+    "stock_location_chained_location_id_fkey" FOREIGN KEY (chained_location_id) REFERENCES stock_location(id) ON DELETE SET NULL
+    "stock_location_company_id_fkey" FOREIGN KEY (company_id) REFERENCES res_company(id) ON DELETE SET NULL
+    "stock_location_create_uid_fkey" FOREIGN KEY (create_uid) REFERENCES res_users(id) ON DELETE SET NULL
+    "stock_location_location_id_fkey" FOREIGN KEY (location_id) REFERENCES stock_location(id) ON DELETE CASCADE
+    "stock_location_partner_id_fkey" FOREIGN KEY (partner_id) REFERENCES res_partner(id) ON DELETE SET NULL
+    "stock_location_valuation_in_account_id_fkey" FOREIGN KEY (valuation_in_account_id) REFERENCES account_account(id) ON DELETE SET NULL
+    "stock_location_valuation_out_account_id_fkey" FOREIGN KEY (valuation_out_account_id) REFERENCES account_account(id) ON DELETE SET NULL
+    "stock_location_write_uid_fkey" FOREIGN KEY (write_uid) REFERENCES res_users(id) ON DELETE SET NULL
+Referenced by:
+    TABLE "ineco_stock_lot_issue" CONSTRAINT "ineco_stock_lot_issue_location_id_fkey" FOREIGN KEY (location_id) REFERENCES stock_location(id) ON DELETE SET NULL
+    TABLE "mrp_production" CONSTRAINT "mrp_production_location_dest_id_fkey" FOREIGN KEY (location_dest_id) REFERENCES stock_location(id) ON DELETE SET NULL
+    TABLE "mrp_production" CONSTRAINT "mrp_production_location_src_id_fkey" FOREIGN KEY (location_src_id) REFERENCES stock_location(id) ON DELETE SET NULL
+    TABLE "mrp_routing" CONSTRAINT "mrp_routing_location_id_fkey" FOREIGN KEY (location_id) REFERENCES stock_location(id) ON DELETE SET NULL
+    TABLE "procurement_order" CONSTRAINT "procurement_order_location_id_fkey" FOREIGN KEY (location_id) REFERENCES stock_location(id) ON DELETE SET NULL
+    TABLE "purchase_order" CONSTRAINT "purchase_order_location_id_fkey" FOREIGN KEY (location_id) REFERENCES stock_location(id) ON DELETE SET NULL
+    TABLE "stock_change_product_qty" CONSTRAINT "stock_change_product_qty_location_id_fkey" FOREIGN KEY (location_id) REFERENCES stock_location(id) ON DELETE CASCADE
+    TABLE "stock_fill_inventory" CONSTRAINT "stock_fill_inventory_location_id_fkey" FOREIGN KEY (location_id) REFERENCES stock_location(id) ON DELETE CASCADE
+    TABLE "stock_inventory_line" CONSTRAINT "stock_inventory_line_location_id_fkey" FOREIGN KEY (location_id) REFERENCES stock_location(id) ON DELETE SET NULL
+    TABLE "stock_inventory_line_split" CONSTRAINT "stock_inventory_line_split_location_id_fkey" FOREIGN KEY (location_id) REFERENCES stock_location(id) ON DELETE CASCADE
+    TABLE "stock_journal" CONSTRAINT "stock_journal_location_dest_id_fkey" FOREIGN KEY (location_dest_id) REFERENCES stock_location(id) ON DELETE SET NULL
+    TABLE "stock_journal" CONSTRAINT "stock_journal_location_id_fkey" FOREIGN KEY (location_id) REFERENCES stock_location(id) ON DELETE SET NULL
+    TABLE "stock_location" CONSTRAINT "stock_location_chained_location_id_fkey" FOREIGN KEY (chained_location_id) REFERENCES stock_location(id) ON DELETE SET NULL
+    TABLE "stock_location" CONSTRAINT "stock_location_location_id_fkey" FOREIGN KEY (location_id) REFERENCES stock_location(id) ON DELETE CASCADE
+    TABLE "stock_move_consume" CONSTRAINT "stock_move_consume_location_id_fkey" FOREIGN KEY (location_id) REFERENCES stock_location(id) ON DELETE CASCADE
+    TABLE "stock_move" CONSTRAINT "stock_move_location_department_id_fkey" FOREIGN KEY (location_department_id) REFERENCES stock_location(id) ON DELETE SET NULL
+    TABLE "stock_move" CONSTRAINT "stock_move_location_dest_id_fkey" FOREIGN KEY (location_dest_id) REFERENCES stock_location(id) ON DELETE SET NULL
+    TABLE "stock_move" CONSTRAINT "stock_move_location_id_fkey" FOREIGN KEY (location_id) REFERENCES stock_location(id) ON DELETE SET NULL
+    TABLE "stock_move_scrap" CONSTRAINT "stock_move_scrap_location_id_fkey" FOREIGN KEY (location_id) REFERENCES stock_location(id) ON DELETE CASCADE
+    TABLE "stock_move_split" CONSTRAINT "stock_move_split_location_id_fkey" FOREIGN KEY (location_id) REFERENCES stock_location(id) ON DELETE CASCADE
+    TABLE "stock_partial_move_line" CONSTRAINT "stock_partial_move_line_location_dest_id_fkey" FOREIGN KEY (location_dest_id) REFERENCES stock_location(id) ON DELETE CASCADE
+    TABLE "stock_partial_move_line" CONSTRAINT "stock_partial_move_line_location_id_fkey" FOREIGN KEY (location_id) REFERENCES stock_location(id) ON DELETE CASCADE
+    TABLE "stock_partial_picking_line" CONSTRAINT "stock_partial_picking_line_location_dest_id_fkey" FOREIGN KEY (location_dest_id) REFERENCES stock_location(id) ON DELETE CASCADE
+    TABLE "stock_partial_picking_line" CONSTRAINT "stock_partial_picking_line_location_id_fkey" FOREIGN KEY (location_id) REFERENCES stock_location(id) ON DELETE CASCADE
+    TABLE "stock_picking" CONSTRAINT "stock_picking_location_dest_id_fkey" FOREIGN KEY (location_dest_id) REFERENCES stock_location(id) ON DELETE SET NULL
+    TABLE "stock_picking" CONSTRAINT "stock_picking_location_id_fkey" FOREIGN KEY (location_id) REFERENCES stock_location(id) ON DELETE SET NULL
+    TABLE "stock_warehouse" CONSTRAINT "stock_warehouse_lot_input_id_fkey" FOREIGN KEY (lot_input_id) REFERENCES stock_location(id) ON DELETE SET NULL
+    TABLE "stock_warehouse" CONSTRAINT "stock_warehouse_lot_output_id_fkey" FOREIGN KEY (lot_output_id) REFERENCES stock_location(id) ON DELETE SET NULL
+    TABLE "stock_warehouse" CONSTRAINT "stock_warehouse_lot_stock_id_fkey" FOREIGN KEY (lot_stock_id) REFERENCES stock_location(id) ON DELETE SET NULL
+    TABLE "stock_warehouse_orderpoint" CONSTRAINT "stock_warehouse_orderpoint_location_id_fkey" FOREIGN KEY (location_id) REFERENCES stock_location(id) ON DELETE CASCADE
+

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+      <menuitem 
+         name="Bangkok Rubber"
+         id="menu_bkkrubber_root" 
+         groups="group_bangkok_rubber"
+         sequence="5"/>
+         
+        <record id="view_bkkrubber_move_tree_reception_picking" model="ir.ui.view">
+            <field name="name">bkkrubber.stock.move.tree</field>
+            <field name="model">stock.move</field>
+            <field name="priority" eval="6"/>
+            <field name="arch" type="xml">
+                <tree colors="grey:state == 'cancel'" string="Moves" editable="bottom">
+                    <field name="date" widget="date"/>
+                    <field name="origin" invisible="1"/>
+                    <field name="partner_id" string="Supplier" invisible="1"/>
+                    <field name="product_id" on_change="onchange_product_id(product_id,location_id,location_dest_id, False)"/>
+                    <field name="name" invisible="1"/>
+                    <field name="product_qty"/>
+                    <field name="product_uom" string="Unit of Measure" />
+                    <field name="price_unit" />
+                    <field name="location_id" invisible="1" />
+                    <field name="warehouse_id" on_change="onchange_warehouse(warehouse_id, context)" />
+                    <field name="location_department_id" invisible="1"/>
+                    <field name="location_dest_id" />
+                    <field name="picking_id" string="Reference" />
+                    <field name="create_date" invisible="1"/>
+                    <field name="date_expected" invisible="1"/>
+                    <field name="state"/>
+                    <button name="action_confirm" states="draft"
+                        icon="gtk-new" type="object"
+                        class="oe_highlight" help="Confirm"/>
+                    <button name="action_done" states="confirmed,assigned"
+                        icon="gtk-ok" type="object"
+                        class="oe_highlight" help="Done"/>
+                    <button name="action_cancel" states="done"
+                        icon="gtk-cancel" type="object"
+                        class="oe_highlight" help="Cancel"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_bkkrubber_move_tree_out_picking" model="ir.ui.view">
+            <field name="name">bkkrubber.stock.move.tree</field>
+            <field name="model">stock.move</field>
+            <field name="priority" eval="6"/>
+            <field name="arch" type="xml">
+                <tree colors="grey:state == 'cancel'" string="Moves" editable="bottom">
+                    <field name="date" widget="date"/>
+                    <field name="origin" invisible="1"/>
+                    <field name="partner_id" string="Supplier" invisible="1"/>
+                    <field name="product_id" on_change="onchange_product_id(product_id,location_id,location_dest_id, False)"/>
+                    <field name="name" invisible="1"/>
+                    <field name="product_qty"/>
+                    <field name="product_uom" string="UoM" />
+                    <field name="price_unit" />
+                    <field name="warehouse_id" on_change="onchange_warehouse(warehouse_id, context)"/>
+                    <field name="location_department_id" domain="[('usage','=','view')]" required="1" on_change="onchange_department(location_department_id, context)"/>
+                    <field name="location_id" invisible="1"/>
+                    <field name="location_dest_id" string="Reason" domain="[('location_id','=',location_department_id)]"/>
+                    <field name="picking_id" string="Reference" />
+                    <field name="create_date" invisible="1"/>
+                    <field name="date_expected" invisible="1"/>
+                    <field name="state"/>
+                    <button name="action_confirm" states="draft"
+                        icon="gtk-new" type="object"
+                        class="oe_highlight" help="Confirm"/>
+                    <button name="action_assign" states="confirmed"
+                        icon="gtk-apply" type="object"
+                        class="oe_highlight" help="Assign"/>
+                    <button name="action_done" states="assigned"
+                        icon="gtk-ok" type="object"
+                        class="oe_highlight" help="Done"/>
+                    <button name="action_cancel" states="done"
+                        icon="gtk-cancel" type="object"
+                        class="oe_highlight" help="Cancel"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_ineco_move_search" model="ir.ui.view">
+            <field name="name">ineco.move.search</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="stock.view_move_search"/>
+            <field name="arch" type="xml">
+            	<field name="origin" position="after">
+	                <filter icon="terp-stock" string="New" name="new" domain="[('state','=','draft')]" help="Stock moves that are New"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="action_bkkrubber_reception_picking_move" model="ir.actions.act_window">
+            <field name="name">Receive Products</field>
+            <field name="res_model">stock.move</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">['|','&amp;',('picking_id','=',False),('location_id.usage', 'in', ['customer','supplier']),'&amp;',('picking_id','!=',False),('picking_id.type','=','in')]</field>
+            <field name="view_id" ref="view_bkkrubber_move_tree_reception_picking"/>
+            <field name="context">{'product_receive': True, 'picking_type': 'in', 'search_default_new': 1}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to register a product reception. 
+              </p><p>
+                Here you can receive individual products, no matter what
+                purchase order or picking order they come from. You will find
+                the list of all products you are waiting for. Once you receive
+                an order, you can filter based on the name of the supplier or
+                the purchase order reference. Then you can confirm all products
+                received using the buttons on the right of each line.
+              </p>
+            </field>
+        </record>
+
+        <record id="action_bkkrubber_out_picking_move" model="ir.actions.act_window">
+            <field name="name">Deliver Products</field>
+            <field name="res_model">stock.move</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">['|','&amp;',('picking_id','=',False),('location_dest_id.usage', 'in', ['customer','supplier','inventory']),'&amp;',('picking_id','!=',False),('picking_id.type','=','out')]</field>
+            <field name="view_id" ref="view_bkkrubber_move_tree_out_picking"/>
+            <field name="context">{'picking_type': 'out', 'search_default_new': True}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to register a product delivery.
+              </p>
+              <p>
+                You will find in this list all products you have to deliver to
+                your customers. You can process the deliveries directly from
+                this list using the buttons on the right of each line. You can
+                filter the products to deliver by customer, products or sale
+                order (using the Origin field).
+              </p>
+            </field>
+        </record>
+
+      <menuitem 
+         name="Stationary"
+         id="menu_bkkrubber_stock_root" 
+         parent="menu_bkkrubber_root" 
+         sequence="1"/>
+
+      <menuitem 
+         action="action_bkkrubber_reception_picking_move" 
+         id="menu_bkkrubber_reception_picking_move" 
+         parent="menu_bkkrubber_stock_root" 
+         sequence="1"/>
+        
+      <menuitem 
+         action="action_bkkrubber_out_picking_move" 
+         id="menu_bkkrubber_out_picking_move" 
+         parent="menu_bkkrubber_stock_root" 
+         sequence="2"/>
+         
+      <menuitem 
+         name="Configuration"
+         id="menu_bkkrubber_stock_config" 
+         parent="menu_bkkrubber_root" 
+         sequence="2"/>     
+             
+      <menuitem action="product.product_normal_action" id="menu_rubber_stock_products_menu" parent="menu_bkkrubber_stock_config" sequence="10"/>
+      <menuitem action="product.product_category_action_form" id="menu_rubber_product_category_config_stock"
+            parent="menu_bkkrubber_stock_config" sequence="11"/>
+      <menuitem
+            action="product.product_uom_categ_form_action" id="menu_rubber_stock_uom_categ_form_action"
+            parent="menu_bkkrubber_stock_config" sequence="20" />
+      <menuitem
+            action="product.product_uom_form_action" id="menu_rubber_stock_uom_form_action"
+            parent="menu_bkkrubber_stock_config" sequence="21" />
+      <menuitem action="stock.action_warehouse_form" id="menu_rubber_action_warehouse_form" 
+            parent="menu_bkkrubber_stock_config" sequence="30"/>
+      <menuitem action="stock.action_location_form" id="menu_rubber_action_location_form" 
+            parent="menu_bkkrubber_stock_config" sequence="31"/>            
+         
+    </data>
+</openerp>
